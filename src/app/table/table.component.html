@@ -1,0 +1,58 @@
+<div class="filter-container">
+    <input 
+        [(ngModel)]="searchName" 
+        (ngModelChange)="applyFilters()"
+        placeholder="Rechercher par nom..."
+        class="search-input"
+      >
+    
+      <select [(ngModel)]="selectedGradeFilter" (change)="applyFilters()" class="filter-select">
+        <option value="all">Tous les notes</option>
+        <option value="success">Validé (>12)</option>
+        <option value="rattrapage">Rattrapage (8-12)</option>
+        <option value="eliminated">Éliminatoire (<8)</option>
+      </select>
+
+      <select [(ngModel)]="selectedGenderFilter" (change)="applyFilters()" class="filter-select">
+        <option value="all">Tous les genres</option>
+        <option value="male">Homme</option>
+        <option value="female">Femme</option>
+      </select>
+    </div>
+
+    <div class="table-container">
+      <h2>Students List - {{ getFilterLabel() }}</h2>
+      <table>
+      <thead>
+  <tr>
+    <th>ID</th>
+    <th>Name</th>
+    <th>Gender</th>
+    <th>Date</th>
+    <th class="sortable" (click)="toggleSort()">
+      Mark 
+      <span class="sort-icon">{{ sortOrder === 'asc' ? '↑' : '↓' }}</span>
+    </th>
+    <th>Status</th>
+  </tr>
+</thead>
+        <tbody>
+        <tr *ngFor="let student of paginatedStudents">
+            <td>{{ student.id }}</td>
+            <td>{{ student.name }}</td>
+            <td>{{ student.gender === 'male' ? 'Homme' : 'Femme' }}</td>
+            <td>{{ student.date | date:'mediumDate' }}</td>
+            <td>{{ student.mark }}</td>
+            <td [ngClass]="getStatusClass(student.mark)">
+              {{ getStatus(student.mark) }}
+            </td>
+          </tr>
+        </tbody>
+      </table>
+      <div style="margin-top: 10px; text-align: center;">
+  <button (click)="goToPreviousPage()" [disabled]="currentPage === 1">Précédent</button>
+  <span style="margin: 0 10px;">Page {{ currentPage }}</span>
+  <button (click)="goToNextPage()" [disabled]="currentPage * pageSize >= filteredStudents.length">Suivant</button>
+</div>
+
+    </div>

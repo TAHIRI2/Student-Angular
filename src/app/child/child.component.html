@@ -1,0 +1,6 @@
+<div>
+    <input [(ngModel)]="tempChildMessage" placeholder="Message de l'enfant">
+    <button (click)="sendMessage()">Envoyer au parent</button>
+    <p>Message du parent : {{ parentMessage | weirdCase }}</p>
+
+  </div>
