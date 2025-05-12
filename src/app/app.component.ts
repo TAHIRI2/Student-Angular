@@ -1,49 +1,25 @@
-// import { Component } from '@angular/core';
-// import { FormsModule } from '@angular/forms';
-// import { ChildComponent } from './child/child.component';
-// import { WeirdCasePipe } from "../weird-case.pipe";
-
-// @Component({
-//   selector: 'app-root',
-//   standalone: true,
-//   imports: [ChildComponent, FormsModule, WeirdCasePipe],
-//   template: `
-//  <h3>Composant Parent</h3>
-// <input [(ngModel)]="parentInput" placeholder="Message du parent">
-// <button (click)="sendToChild()">Envoyer à l'enfant</button>
-// <p>Message reçu de l'enfant: {{ childMessage | weirdCase}}</p>
-
-// <hr>
-// <app-child 
-//   [parentMessage]="parentMessage"
-//   (messageEvent)="receiveMessage($event)">
-// </app-child>
-
-//   `
-// })
-// export class AppComponent {
-//   parentInput = '';
-//   parentMessage = ''; // Ce qu’on envoie à l’enfant
-//   childMessage = '';
-
-//   sendToChild() {
-//     this.parentMessage = this.parentInput;
-//   }
-
-//   receiveMessage(message: string) {
-//     this.childMessage = message;
-//   }
-// }
 import { Component } from '@angular/core';
-import { TableComponent } from './table/table.component';
+import { RouterModule } from '@angular/router';
 
 @Component({
   selector: 'app-root',
   standalone: true,
-  imports: [TableComponent],
+  imports: [RouterModule],
   template: `
-    <app-table></app-table>
-  `
+    <div class="app-container">
+      <h1>Gestion des étudiants</h1>
+      <router-outlet></router-outlet>
+    </div>
+  `,
+  styles: [`
+    .app-container {
+      padding: 20px;
+    }
+    h1 {
+      text-align: center;
+      color: #333;
+    }
+  `]
 })
 export class AppComponent {
   title = 'imbriquer-app';

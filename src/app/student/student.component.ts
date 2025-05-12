@@ -1,32 +1,66 @@
 import { Component } from '@angular/core';
-import { FormsModule } from '@angular/forms';
-
-interface Student {
-  id: number;
-  name: string;
-  gender: string;
-  date: Date;
-  mark: number;
-}
+import { FormBuilder, FormGroup, Validators, AbstractControl, ValidationErrors, ReactiveFormsModule } from '@angular/forms';
+import { Router } from '@angular/router';
+import { StudentService, Student } from '../services/student.service';
+import { CommonModule } from '@angular/common';
 
 @Component({
   selector: 'app-student',
   standalone: true,
-  imports: [FormsModule],
+  imports: [CommonModule, ReactiveFormsModule],
   templateUrl: './student.component.html',
-  styleUrl: './student.component.css'
+  styleUrls: ['./student.component.css']
 })
 export class StudentComponent {
-  student: Student = {
-    id: 0,
-    name: '',
-    gender: '',
-    date: new Date(),
-    mark: 0
-  };
+  studentForm: FormGroup;
+  submitted = false;
+
+  constructor(
+    private fb: FormBuilder,
+    private router: Router,
+    private studentService: StudentService
+  ) {
+    const nextId = this.studentService.getNextId();
+    this.studentForm = this.fb.group({
+      id: [nextId],
+      name: ['', [Validators.required, Validators.minLength(3)]],
+      gender: ['', Validators.required],
+      date: ['', Validators.required],
+      mark: ['', [Validators.required, this.markValidator()]]
+    });
+  }
+
+  // Validateur personnalisé pour la note
+  markValidator() {
+    return (control: AbstractControl): ValidationErrors | null => {
+      const mark = control.value;
+      if (isNaN(mark) || mark < 0 || mark > 20) {
+        return { invalidMark: true };
+      }
+      return null;
+    };
+  }
+
+  // Getters pour accéder facilement aux champs du formulaire
+  get f() { return this.studentForm.controls; }
 
   submitStudent() {
-    console.log('Student submitted:', this.student);
-    // Here you can add logic to save the student
+    this.submitted = true;
+
+    if (this.studentForm.invalid) {
+      return;
+    }
+
+    const newStudent: Student = {
+      ...this.studentForm.value,
+      date: new Date(this.studentForm.value.date)
+    };
+
+    this.studentService.addStudent(newStudent);
+    this.router.navigate(['/']);
+  }
+
+  goToList() {
+    this.router.navigate(['/']);
   }
 }
